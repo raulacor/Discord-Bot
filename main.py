@@ -4,6 +4,10 @@ import logging
 from dotenv import load_dotenv
 import os
 
+#roles:
+role_1 = "fiaper"
+secret_role = "Gamer"
+role_svbooster = "Server Booster"
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
@@ -18,9 +22,6 @@ intents.members = True
 #How to call for the bot:
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-#roles:
-role_1 = "fiaper"
-secret_role = "Gamer"
 
 @bot.event
 async def on_ready():
@@ -32,7 +33,9 @@ async def on_member_join(member):
 
 @bot.event
 async def premium_subscriptions(member, ctx):
+    role_booster = discord.utils.get(ctx.guild.roles, name=role_svbooster)
     await member.send(f"{member.name} is boosting the server!")
+    await ctx.author.add_roles(role_booster)
 
 @bot.event
 async def on_message(message):
