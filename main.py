@@ -31,16 +31,33 @@ async def on_member_join(member):
     await member.send(f"Welcome to the server {member.name}")
 
 @bot.event
+async def premium_subscriptions(member, ctx):
+    await member.send(f"{member.name} is boosting the server!")
+
+@bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     
 
-    await bot.process_commands(message) #DO NOT DELETE, this allows the bot to continue to proccess all of the other messages.
+    await bot.process_commands(message)  #DO NOT DELETE, this allows the bot to continue to proccess all of the other messages.
 
 @bot.command()
 async def hello(ctx):
     await ctx.send(f"Hello {ctx.author.mention}!")
+
+@bot.command()
+async def dm(ctx, *, msg):
+    await ctx.author.send(f"You said {msg} ")
+
+@bot.command()
+async def poll(ctx, *, question):
+    embed = discord.Embed(title="New Poll", description=question)
+    poll_message = await ctx.send(embed=embed)
+    await poll_message.add_readction("✅")
+    await poll_message.add_readction("⛔")
+
+### Roles c.r.u.d
 
 @bot.command()
 async def assign(ctx):
@@ -69,6 +86,6 @@ async def secret(ctx):
 async def secret_error(ctx, error):
     if isinstance(error, commands.MissingRole):
         await ctx.send("You do not have permission to do that!")
-        
+
 
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
