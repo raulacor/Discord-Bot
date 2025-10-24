@@ -172,9 +172,21 @@ class ReportModal(discord.ui.Modal, title="Report Form"):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"✅ Report received!\n**Name:** {self.user_name.value}\n**Description:** {self.description.value}\n**User ID:** {self.user_id.value}",
-            ephemeral=True
-        )
+                f"The user {interaction.user.mention} reported:\n"
+                f"**Name:** {self.user_name.value}\n"
+                f"**Description:** {self.description.value}\n"
+                f"**User ID:** {self.user_id.value}\n"
+                )
+        channel = discord.utils.get(interaction.guild.channels, name="report-adm")
+        if channel:
+            await channel.send(
+                f"The user {interaction.user.mention} reported:\n"
+                f"**Name:** {self.user_name.value}\n"
+                f"**Description:** {self.description.value}\n"
+                f"**User ID:** {self.user_id.value}\n"
+                )
+        else:
+            print("Channel 'report-adm' not found!")
 
 @bot.tree.command(name="report", description="Report someone for bad behaviours")
 async def report(interaction: discord.Interaction):
