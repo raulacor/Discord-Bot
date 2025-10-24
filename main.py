@@ -107,9 +107,28 @@ class VerifyModal(discord.ui.Modal, title="Verify"):
         role_verify = discord.utils.get(interaction.guild.roles, name=role_verificated)
         await interaction.user.add_roles(role_verify)
         await interaction.response.send_message(
-            f"welcome to the server!\n**Name:** {self.verify_name.value}\n**Play's Minecraft:** {self.minecraft.value}\n**Play's PokemonGo:** {self.pokemongo.value}\n**PokemonGo Trainer-Code:** {self.pokemongo_tc.value or 'N/A'}\n**School:** {self.institution.value}",
-            ephemeral=True
-        )
+                f"welcome to the server\n"
+                f"**Name:** {self.verify_name.value}\n"
+                f"**Play's Minecraft:** {self.minecraft.value}\n"
+                f"**Play's PokemonGo:** {self.pokemongo.value}\n"
+                f"**PokemonGo Trainer-Code:** {self.pokemongo_tc.value or 'N/A'}\n"
+                f"**School:** {self.institution.value}",
+                ephemeral=True
+                )
+
+
+        channel = discord.utils.get(interaction.guild.channels, name="verify-adm")
+        if channel:
+            await channel.send(
+                f"The user {interaction.user.mention} has verified, please assign his roles accordingly\n"
+                f"**Name:** {self.verify_name.value}\n"
+                f"**Play's Minecraft:** {self.minecraft.value}\n"
+                f"**Play's PokemonGo:** {self.pokemongo.value}\n"
+                f"**PokemonGo Trainer-Code:** {self.pokemongo_tc.value or 'N/A'}\n"
+                f"**School:** {self.institution.value}"
+                )
+        else:
+            print("Channel 'verify' not found!")
 
 @bot.tree.command(name="verify", description="Verify to access the server")
 async def verify(interaction: discord.Interaction):
