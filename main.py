@@ -8,6 +8,7 @@ import os
 role_1 = "fiaper"
 secret_role = "Gamer"
 role_svbooster = "Server Booster"
+role_verificated = "Verified"
 
 load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
@@ -25,7 +26,10 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
+    await bot.tree.sync()
     print(f"Bot loaded and ready to go, {bot.user.name}")
+
+# Events:
 
 @bot.event
 async def on_member_join(member):
@@ -42,8 +46,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-
-    await bot.process_commands(message)  #DO NOT DELETE, this allows the bot to continue to proccess all of the other messages.
+    #DO NOT DELETE, this allows the bot to continue to proccess all of the other messages.
+    await bot.process_commands(message)  
 
 @bot.command()
 async def hello(ctx):
@@ -59,6 +63,92 @@ async def poll(ctx, *, question):
     poll_message = await ctx.send(embed=embed)
     await poll_message.add_readction("✅")
     await poll_message.add_readction("⛔")
+
+
+
+
+#Verify Modal:
+class VerifyModal(discord.ui.Modal, title="Verify"):
+    verify_name = discord.ui.TextInput(
+        label="NAME",
+        placeholder="wagner Stefano",
+        required=True,
+        max_length=50
+    )
+    minecraft = discord.ui.TextInput(
+        label="Play's Minecraft",
+        placeholder="y/n",
+        required=True,
+        max_length=3
+    )
+    pokemongo = discord.ui.TextInput(
+        label="Play's PokemonGo",
+        placeholder="y/n",
+        required=True,
+        max_length=3
+    )
+    pokemongo_tc = discord.ui.TextInput(
+        label="Trainer Code",
+        placeholder="2074 5588 0748",
+        required=False,
+        max_length=14
+    )
+    institution = discord.ui.TextInput(
+        label="School/Work",
+        placeholder="eg. FIAP",
+        required=True,
+        max_length=25,
+        style=discord.TextStyle.paragraph
+    )
+
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            f"welcome to the server!\n**Name:** {self.verify_name.value}\n**Play's Minecraft:** {self.minecraft.value}\n**Play's PokemonGo:** {self.pokemongo.value}\n**PokemonGo Trainer-Code:** {self.pokemongo_tc.value or 'N/A'}\n**School:** {self.institution.value}",
+            ephemeral=True
+        )
+
+@bot.tree.command(name="verify", description="Verify to access the server")
+async def verify(interaction: discord.Interaction):
+    verification = VerifyModal()
+    await interaction.response.send_modal(verification)
+
+
+
+# Report Modal:
+class ReportModal(discord.ui.Modal, title="Report Form"):
+    user_name = discord.ui.TextInput(
+        label="USER'S DISCORD NAME",
+        placeholder="eg. VampiroDoidão#0000",
+        required=True,
+        max_length=100
+    )
+    user_id = discord.ui.TextInput(
+        label="USER'S DISCORD ID",
+        placeholder="Make sure Developer mode is ON.",
+        required=True,
+        max_length=100
+    )
+    description = discord.ui.TextInput(
+        label="Description",
+        placeholder="eg. Broke rule #1",
+        required=True,
+        max_length=400,
+        style=discord.TextStyle.paragraph
+    )
+
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            f"✅ Report received!\n**Name:** {self.user_name.value}\n**Description:** {self.description.value}\n**User ID:** {self.user_id.value}",
+            ephemeral=True
+        )
+
+@bot.tree.command(name="report", description="Report someone for bad behaviours")
+async def report(interaction: discord.Interaction):
+    modal = ReportModal()
+    await interaction.response.send_modal(modal)
+
 
 ### Roles c.r.u.d
 
