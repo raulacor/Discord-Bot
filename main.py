@@ -103,6 +103,9 @@ class VerifyModal(discord.ui.Modal, title="Verify"):
 
 
     async def on_submit(self, interaction: discord.Interaction):
+        role_verificated = "Verified"
+        role_verify = discord.utils.get(interaction.guild.roles, name=role_verificated)
+        await interaction.user.add_roles(role_verify)
         await interaction.response.send_message(
             f"welcome to the server!\n**Name:** {self.verify_name.value}\n**Play's Minecraft:** {self.minecraft.value}\n**Play's PokemonGo:** {self.pokemongo.value}\n**PokemonGo Trainer-Code:** {self.pokemongo_tc.value or 'N/A'}\n**School:** {self.institution.value}",
             ephemeral=True
@@ -110,8 +113,18 @@ class VerifyModal(discord.ui.Modal, title="Verify"):
 
 @bot.tree.command(name="verify", description="Verify to access the server")
 async def verify(interaction: discord.Interaction):
-    verification = VerifyModal()
-    await interaction.response.send_modal(verification)
+    role_verificated = "Verified"  # must match the same name above
+    role_verify = discord.utils.get(interaction.guild.roles, name=role_verificated)
+
+    if role_verify in interaction.user.roles:
+        await interaction.response.send_message(
+            f"{interaction.user.mention}, you are already verified!",
+            ephemeral=True
+        )
+    else:
+        modal = VerifyModal()
+        await interaction.response.send_modal(modal)
+
 
 
 
